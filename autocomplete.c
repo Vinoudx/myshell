@@ -60,7 +60,8 @@ struct AutoCompleteResult autocomplete(const char* buffer, const char* working_p
     while ((entry = readdir(dir)) != NULL) {
         if (strncmp(entry->d_name, prefix, strlen(prefix)) == 0) {
             results.results[results.amount] = entry->d_name;
-            if (entry->d_type == DT_DIR){
+            struct stat st;
+            if (stat(entry->d_name, &st) == 0 && S_ISDIR(st.st_mode)){
                 strcat(results.results[results.amount], "/");
             }
             results.amount ++;

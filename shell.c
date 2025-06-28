@@ -106,10 +106,13 @@ int main() {
             char to_pick[1024];
             memset(to_pick, '\0', sizeof(to_pick));
             auto_complete_task(buffer, working_path, to_pick, &pos);
+            refresh_terminal(buffer, current_user, working_path, 1); 
             if (strlen(to_pick) != 0){
+                std_print("\n");
                 refresh_terminal(to_pick, "", "", 0);
+                refresh_terminal(buffer, current_user, working_path, 1); 
             }
-            refresh_terminal(buffer, current_user, working_path, 1);
+
         } else if (ch == '\b' || ch == 127){
             if (pos > 0){
                 buffer[--pos] = '\0';

@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <ctype.h>
+#include <sys/stat.h> //用stat来判断是不是文件夹
 
 #include <terminal_logger.h>
 
