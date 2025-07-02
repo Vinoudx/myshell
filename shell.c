@@ -11,9 +11,13 @@
 #include <terminal_logger.h>
 #include <autocomplete.h>
 #include <syntaxanalyser.h>
+#include <all_commands.h>
 
 #define std_print(buffer) write(STDOUT_FILENO, buffer, strlen(buffer));
 #define MAX_INPUT_LENGTH 256
+#define MAX_NUM_ARGS 8
+#define MAX_ARG_LENGTH 64
+#define CONFIG_PATH "/home/vinoudx/work/myshell/configs/"
 
 
 struct termios termios_previous;
@@ -31,13 +35,21 @@ void restore_terminal_mode(){
     fflush(stdout);
 }
 
-void refresh_terminal(const char* buffer,const char* user_name,const char* working_path, int need_head){
-    std_print("\r\033[2K");
+void refresh_terminal(const char* buffer,const char* user_name,const char* working_path, int need_head, int from_head){
+    if(from_head == 1)
+        std_print("\r\033[2K");
+
+    char isRoot;
+    if(getuid() == 0){
+        isRoot = '#';
+    }else{
+        isRoot = '$';
+    }
 
     char output[1024];
     memset(output, '\0', sizeof(output));
     if (need_head != 0){
-        sprintf(output, "%s:~%s$%s", user_name, working_path, buffer);
+        sprintf(output, "%s:~%s%c%s", user_name, working_path, isRoot, buffer);
     }else{
         sprintf(output, "%s", buffer);
     }
@@ -73,10 +85,8 @@ void auto_complete_task(char* buffer, const char* working_path, char* to_pick, i
         }
         break;
     case OPTION: // OK
-        char* temp = strchr(res.command_list[res.num_command], ' ');
-        char command[32] = {'\0'};
-        strncpy(command, res.command_list[res.num_command], strlen(res.command_list[res.num_command]) - strlen(temp));
-        cres = option_autocomplete(buffer, res.last_word.content, command);
+        INFO(res.command_list[res.num_command][0].content);
+        cres = option_autocomplete(buffer, res.last_word.content, res.command_list[res.num_command][0].content);
         break;
     default:
         cres.amount = 1;
@@ -102,6 +112,73 @@ void auto_complete_task(char* buffer, const char* working_path, char* to_pick, i
     }
 }
 
+void execute_task(char* buffer, char* working_path){
+    if(strcmp(buffer, "cd ..") == 0){
+        int a = 1;
+    }
+    char temp_result[1024] = {'\0'};
+    struct Token tokens[MAX_COMMAND_LENGTH] = {{END, "end"}};
+    size_t token_pos = 0;
+    tokenize_(buffer, tokens, &token_pos);
+    struct SyntaxAnalyseResult res = syntax_analyser(tokens, token_pos);
+    if(res.isValid == 0){
+        memset(buffer, '\0', 1024);
+        strcpy(buffer, res.error_info);
+        strcat(buffer, "\n");
+        return;
+    }
+    int status = 1;
+    for (int i=1;i<=res.num_command;i++){
+        if(status == 0){
+            break;
+        }
+
+        char* command_name = res.command_list[i][0].content;
+        char args[MAX_NUM_ARGS][MAX_ARG_LENGTH];
+        memset(args, '\0', sizeof(args));
+
+        for (int j=1;j<res.command_length[i];j++){
+            strcpy(args[j-1], res.command_list[i][j].content);
+        }
+        char* argv[MAX_NUM_ARGS];
+        memset(argv, '\0', sizeof(argv));
+        for (int k = 0; k < res.command_length[i] - 1; k++) {
+            argv[k] = args[k];
+        }
+
+        if(strcmp(command_name, "ls") == 0){
+
+        }else if(strcmp(command_name, "cd") == 0){
+            
+            cd_(temp_result, &status, argv, res.command_length[i] - 1);
+            getcwd(working_path, 1024);
+            INFO(working_path);
+
+        }else if(strcmp(command_name, "cat") == 0){
+            
+        }else if(strcmp(command_name, "grep") == 0){
+            
+        }else if(strcmp(command_name, "echo") == 0){
+
+            echo_(temp_result, &status, argv, res.command_length[i] - 1);
+
+        }else if(strcmp(command_name, "type") == 0){
+            
+        }else if(strcmp(command_name, "history") == 0){
+            
+        }else if(strcmp(command_name, "alias") == 0){
+            
+        }else{
+            strcpy(temp_result, "shell: unknown command\n");
+            break;
+        }
+
+    }
+
+    strncpy(buffer, temp_result, MAX_INPUT_LENGTH);
+}
+
+
 int main() {
     change_terminal_mode();
 
@@ -118,35 +195,44 @@ int main() {
     chdir(working_path);
 
     time_t time_begin = time(NULL);
-    refresh_terminal(buffer, current_user, working_path, 1);
+    refresh_terminal(buffer, current_user, working_path, 1, 1);
     while (read(STDIN_FILENO, &ch, 1) == 1) {
         if (ch == '\n') {
-            printf("\n最终输入:%s\n", buffer);
             if(strcmp(buffer, "exit") == 0)break;
-            refresh_terminal(buffer, current_user, working_path, 1);
+            alias_replace(buffer);
+            INFO(buffer);
+            execute_task(buffer, working_path);
+            std_print("\n");
+            if(strlen(buffer) != 0){ // 命令返回的信息
+                refresh_terminal(buffer, "", "", 0, 1);
+            }
+            memset(buffer, '\0', sizeof(buffer));
+            pos = 0;
+            refresh_terminal(buffer, current_user, working_path, 1, 0);
+
         } else if (ch == '\t') {
             char to_pick[1024];
             memset(to_pick, '\0', sizeof(to_pick));
             auto_complete_task(buffer, working_path, to_pick, &pos);
-            refresh_terminal(buffer, current_user, working_path, 1);
+            refresh_terminal(buffer, current_user, working_path, 1, 1);
 
             if(difftime(time(NULL), time_begin) < 0.05 && strlen(to_pick) > 0){
                 std_print("\n");
-                refresh_terminal(to_pick, "", "", 0);
-                refresh_terminal(buffer, current_user, working_path, 1); 
+                refresh_terminal(to_pick, "", "", 0, 1);
+                refresh_terminal(buffer, current_user, working_path, 1, 1); 
             }
             time_begin = time(NULL);
         } else if (ch == '\b' || ch == 127){
             if (pos > 0){
                 buffer[--pos] = '\0';
             }
-            refresh_terminal(buffer, current_user, working_path, 1);
+            refresh_terminal(buffer, current_user, working_path, 1, 1);
         } else if (isprint(ch)) {
             buffer[pos++] = ch;
-            refresh_terminal(buffer, current_user, working_path, 1);
+            refresh_terminal(buffer, current_user, working_path, 1, 1);
         }
     }
-
+    std_print("\n");
     restore_terminal_mode();
     return 0;
 }

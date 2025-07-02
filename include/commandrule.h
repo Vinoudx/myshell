@@ -21,6 +21,7 @@ struct OptionRule{
 
 struct CommandRule{
     char command_name[16];
+    char type[16];
     int num_main_params;
     int num_options;
     struct OptionRule options[4];

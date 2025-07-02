@@ -1,33 +1,36 @@
 #include <commandrule.h>
 
-const struct CommandRule alias_command = {"alias", 1, 0, {{"main", 1, ARG_COMMAND, 0}}};
+const struct CommandRule alias_command = {"alias", "shell build in", 1, 0, {{"main", 1, ARG_STRING, 0}}};
 
-const struct CommandRule cat_command = {"cat", 1, 0, {
+const struct CommandRule cat_command = {"cat", "cat", 1, 0, {
     {"main", 1, ARG_FILE, 1}
 }};
 
-const struct CommandRule cd_command = {"cd", 1, 0, {
+const struct CommandRule cd_command = {"cd", "shell build in", 1, 0, {
     {"main", 1, ARG_DIR, 1}
 }};
 
-const struct CommandRule echo_command = {"echo", 1, 0, {
+const struct CommandRule echo_command = {"echo", "shell build in", 1, 0, {
+    {"main", 1, ARG_STRING, 1},
+    {"-n", 0, ARG_NONE, 0},
+    {"-E", 0, ARG_NONE, 0},
+    {"-e", 0, ARG_NONE, 0}
+}};
+
+const struct CommandRule grep_command = {"grep", "grep", 1, 0, {
     {"main", 1, ARG_STRING, 1}
 }};
 
-const struct CommandRule grep_command = {"grep", 1, 0, {
-    {"main", 1, ARG_STRING, 1}
-}};
-
-const struct CommandRule history_command = {"history", 1, 0, {
+const struct CommandRule history_command = {"history", "shell build in", 1, 0, {
     {"main", 1, ARG_STRING, 0}
 }};
 
-const struct CommandRule ls_command = {"ls", 0, 2, {
+const struct CommandRule ls_command = {"ls", "ls", 0, 2, {
     {"-l", 0, ARG_NONE, 0},
     {"-a", 0, ARG_NONE, 0}
 }};
 
-const struct CommandRule type_command = {"type", 1, 0, {
+const struct CommandRule type_command = {"type", "shell build in", 1, 0, {
     {"main", 1, ARG_COMMAND, 1}
 }};
 

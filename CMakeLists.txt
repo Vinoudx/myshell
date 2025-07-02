@@ -3,7 +3,7 @@ project(myshell)
 
 set(CMAKE_BUILD_TYPE Debug)
 
-add_definitions(-DDBUG)
+add_definitions(-DDEBUG)
 
 aux_source_directory(. SRC)
 list(REMOVE_ITEM SRC

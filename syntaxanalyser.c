@@ -3,7 +3,7 @@
 void tokenize_(const char* buffer, struct Token tokens[], size_t* token_pos){
     char ch;
     int word_pos = 0;
-    char word[1024];
+    char word[1024] = {'\0'};
     int buffer_pos = 0;
     struct Token token;
     INFO(buffer);
@@ -45,7 +45,7 @@ void tokenize_(const char* buffer, struct Token tokens[], size_t* token_pos){
             tokens[(*token_pos)++] = token;
 
             word_pos = 0;
-            memset(word, 0, sizeof(word));
+            memset(word, '\0', sizeof(word));
 
         }else if(buffer[buffer_pos] == '$'){
             while(buffer[buffer_pos] != ' ' && buffer[buffer_pos] != '\0'){
@@ -100,7 +100,7 @@ void tokenize_(const char* buffer, struct Token tokens[], size_t* token_pos){
             strncpy(token.content, word, MAX_WORD_LENGTH);
             tokens[(*token_pos)++] = token;
             word_pos = 0;
-            memset(word, 0, sizeof(word));
+            memset(word, '\0', sizeof(word));
         }
     }
     token.token_type = END;
@@ -110,16 +110,18 @@ void tokenize_(const char* buffer, struct Token tokens[], size_t* token_pos){
 
 struct SyntaxAnalyseResult syntax_analyser(struct Token tokens[], size_t token_pos){
     struct SyntaxAnalyseResult result;
-    result.isValid = 0;
-    result.num_command = 0;
+    result.isValid = 1;
+    result.num_command = 0; // 这个是从一开始的，属于后期发现前期设计失误不好改了
     result.num_connect_char = 0;
+    memset(result.command_length, 0, sizeof(result.command_length));
     strcpy(result.error_info, "No Error");
-    memset(result.command_list, '\0', sizeof(result.command_list));
+    // memset(result.command_list, '\0', sizeof(result.command_list));
 
     char single_command[MAX_COMMAND_LENGTH];
     int first_word = 1;
     int now = 0;
     int pre = 0;
+    size_t current_length = 0;
     char current_command[MAX_COMMAND_LENGTH];
     while(now < token_pos){
         if(tokens[now].token_type == IDENTIFIER){ // 当前是标识符
@@ -128,7 +130,6 @@ struct SyntaxAnalyseResult syntax_analyser(struct Token tokens[], size_t token_p
                 tokens[now].token_type = COMMAND;
                 memset(current_command, '\0', sizeof(current_command));
                 strcpy(current_command, tokens[now].content);
-                // strcat(single_command, tokens[now].content);
                 result.num_command++;
                 pre = now; now++;
             }else{                 
@@ -197,6 +198,10 @@ struct SyntaxAnalyseResult syntax_analyser(struct Token tokens[], size_t token_p
                     // 如果前一个是可执行文件，则不用管
                     tokens[now].token_type = ESCAPE;
                     pre = now; now++;
+                }else if(tokens[pre].token_type == ENV && strcmp(current_command, "echo") == 0){
+                    // 如果前一个是环境变量，给echo开后门，则不用管
+                    tokens[now].token_type = ESCAPE;
+                    pre = now; now++;
                 }else{
                     // 如果是其他的那么出错    
                     result.isValid = 0;
@@ -212,27 +217,33 @@ struct SyntaxAnalyseResult syntax_analyser(struct Token tokens[], size_t token_p
             }
             first_word = 1;
             result.connection_char[result.num_connect_char++] = tokens[now].content[0];
-            strcpy(result.command_list[result.num_command], single_command);
-            memset(single_command, '\0', sizeof(single_command));
+            // strcpy(result.command_list[result.num_command], single_command);
+            // memset(single_command, '\0', sizeof(single_command));
+            result.command_length[result.num_command] = current_length;
+            current_length = 0;
+            
             result.num_connect_char++;
             pre = now; now++;
             continue;
         }else if(tokens[now].token_type == END){
-            strcpy(result.command_list[result.num_command], single_command);
+            // strcpy(result.command_list[result.num_command], single_command);
+            result.command_length[result.num_command] = current_length;
             result.last_word = tokens[pre];
             pre = now; now++;
             break;
         }else if(tokens[now].token_type == ASYN){
             result.isAsyn = 1;
-            strcpy(result.command_list[result.num_command], single_command);
+            // strcpy(result.command_list[result.num_command], single_command);
+            result.command_length[result.num_command] = current_length;
             result.last_word = tokens[pre];
             pre = now; now++;
             break;
         }else{
             pre = now; now++;
         }
-        strcat(single_command, tokens[pre].content);
-        strcat(single_command, " ");
+        // strcat(single_command, tokens[pre].content);
+        // strcat(single_command, " ");
+        result.command_list[result.num_command][current_length++] = tokens[pre];
     }
     return result;
 }
