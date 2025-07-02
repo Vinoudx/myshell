@@ -1,2 +1,6 @@
 build/
 .vscode/
+autocomplete_test
+autocomplete_test.c
+syntax_test
+syntax_test.c

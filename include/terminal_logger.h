@@ -10,7 +10,7 @@
 #include <ctype.h>
 #include <time.h>
 
-#define MAX_LOG_LENTH 100
+#define MAX_LOG_LENTH 128
 #define MAX_INPUT_LOG_LENTH 90
 
 enum logLevel{
@@ -19,9 +19,15 @@ enum logLevel{
     ERROR,
 };
 
+#ifdef DEBUG
 #define INFO(log) logger(log, INFO, __FILE__, __LINE__)
 #define WARNING(log) logger(log, WARNING, __FILE__, __LINE__)
 #define ERROR(log) logger(log, ERROR, __FILE__, __LINE__)
+#else
+#define INFO(log)
+#define WARNING(log)
+#define ERROR(log)
+#endif
 
 char* get_enum_item(enum logLevel);
 void formatter(char* target, const char* log, enum logLevel level, const char* file, size_t line_no);
