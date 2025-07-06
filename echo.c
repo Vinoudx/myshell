@@ -61,6 +61,8 @@ void echo_(char* pre_result, int* status, const char** args, size_t num_args){
     char content[1024] = {'\0'};
     int escape_n = 0;
     int activate_char = 0;
+    char in_name[1024] = {'\0'};
+    char out_name[1024] = {'\0'};
     for (int i=0; i<num_args; i++){
         if(strcmp(args[i], "-n") == 0){
             escape_n = 1;
@@ -68,6 +70,23 @@ void echo_(char* pre_result, int* status, const char** args, size_t num_args){
             activate_char = 1;
         }else if(strcmp(args[i], "-E") == 0){
             activate_char = 0;
+        }else if(strcmp(args[i], "<") == 0){
+            i++;
+            if(i >= num_args){
+                strcpy(pre_result, "echo: invalid io_redirection\n");
+                *status = 0;
+                return;
+            }
+            strcpy(in_name, args[i]);
+
+        }else if(strcmp(args[i], ">") == 0){
+            i++;
+            if(i >= num_args){
+                strcpy(pre_result, "echo: invalid io_redirection\n");
+                *status = 0;
+                return;
+            }
+            strcpy(out_name, args[i]);
         }else{
             char* p = strchr(args[i], '$');
             if(p != NULL){
@@ -79,11 +98,33 @@ void echo_(char* pre_result, int* status, const char** args, size_t num_args){
         }
     }
 
+    if(strlen(in_name) != 0){
+        FILE* fp = fopen(in_name, "r");
+        if(fp == NULL){
+            strcpy(pre_result, "echo: no such file\n");
+            *status = 0;
+            return;
+        }
+        char line[1024]; 
+        while (fgets(line, sizeof(line), fp) != NULL) {
+            strncat(content, line, strlen(line) - 1);
+        }
+        fclose(fp);
+    }
+
     if(activate_char == 1){
         replace_(content);
     }
-    strncpy(pre_result, content, 1024);
-    if(escape_n != 1){
-        strcat(pre_result, "\n");
+
+    if(strlen(out_name) != 0){
+        FILE* fp = fopen(out_name, "w");
+        char line[1024]; 
+        fputs(content, fp);
+        fclose(fp);
+    }else{
+        strncpy(pre_result, content, 1024);
+        if(escape_n != 1){
+            strcat(pre_result, "\n");
+        }
     }
 }

@@ -9,7 +9,7 @@ void cd_(char* pre_result, int* status, const char** args, size_t num_args){
     int cd_ctrl = chdir(args[0]);
     INFO(args[0]);
     if(cd_ctrl == 0){
-        strcpy(pre_result, "\n");
+        // strcpy(pre_result, "\n");
     }else{
         strcpy(pre_result, "cd: ");
         strcat(pre_result, strerror(errno));

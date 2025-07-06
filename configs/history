@@ -1,0 +1,153 @@
+1 history
+2 echo "123"
+3 ls
+4 cd .
+5 type grep
+6 type grep cd
+7 echo "hello"
+8 echo "hello" abc
+9 type cd cd
+10 echo aaa aaa
+11 echo aaa aaa
+12 echo aaa aaa
+13 echo aaa
+14 echo aaa
+15 echo aaa aaa
+16 echo aaaa aaa
+17 echo aaa aaa
+18 echo aaa
+19 echo aaa aaa
+20 type cd cd 
+21 type cd cd
+22 type cd cd
+23 type cd cd
+24 type cd cd
+25 type cd cd -t
+26 echo aaa aaa
+27 echo aaa aaa
+28 type cd cd -t
+29 grep "ll" ./work/myshell/configs/alias
+30 grep "ll" < ./work/myshell/configs/alias
+31 grep "ll" < ./work/myshell/configs/alias > grep_test
+32 grep "ll" < ./work/myshell/configs/alias > grep_test
+33 grep "ll" < ./work/myshell/configs/alias > grep_test
+34 ls
+35 ls -a
+36 ls -a
+37 ls -a
+38 ls
+39 ls -a
+40 ls -l
+41 
+42 ls -l
+43 ls -l
+44 ls -a
+45 ls
+46 ls -a
+47 ls -a
+48 echo asd
+49 ls -l
+50 
+51 ls -l
+52 ls -a
+53 cd work/
+54 ls
+55 ls -l
+56 ls
+57 ls -a
+58 ls
+59 ls -a
+60 ls -a
+61 ls
+62 cd work/
+63 ls
+64 ls
+65 cd work/
+66 echo wasd
+67 cd myshell/
+68 ls
+69 ls -a
+70 ls -l
+71 ls -l
+72 ls -a
+73 ls
+74 ls -b
+75 ls -a
+76 ls -a
+77 ls
+78 ls
+79 ls- a
+80 ls -a
+81 cd work/
+82 cd work/
+83 ls
+84 ls -a
+85 ls -a
+86 ls -a
+87 ls -a
+88 ls -a
+89 ls -a
+90 ls -a
+91 ls -l
+92 ls -l
+93 ls -l
+94 ls -a
+95 ls
+96 ls -a | grep "."
+97 ls -l | grep "vin"
+98 cat < file1
+99 cat < file1 > file2
+100 cd work/myshell/test/
+101 cat file1.txt
+102 cat file1
+103 cd work/myshell/test/
+104 cat file1
+105 cat a1
+106 cat a1
+107 cat a1
+108 cat a1
+109 cat a1
+110 cat < a1
+111 cat a1
+112 cat a1 a2
+113 cat < a1 a2
+114 cat a1 a2
+115 cat < a1 a2
+116 cat a1 a2 > a3
+117 cat < a1
+118 cat < a1 | grep "a1"
+119 grep "a1" < a1
+120 cat a1
+121 cat < a1 | grep "a1"
+122 cat < a1 | grep "a1"
+123 cat < a1 | grep "a"
+124 cat < a1 | grep "a"
+125 cat < a1 | grep "a"
+126 cat < a1 | grep "a"
+127 cat < a1 | grep "a"
+128 cat < a1 | grep "a"
+129 cat < a1 | grep "a"
+130 cat < a1 | grep "a"
+131 cat < a1 | grep "a"
+132 cat < a1 | grep "a"
+133 cat < a1 | grep "a"
+134 cat < a1 | grep "a"
+135 cat < a1 | grep "a"
+136 cat < a1 | grep "a"
+137 cat < a1 | grep "a"
+138 cat < a1 | grep "a"
+139 ls
+140 ls -l
+141 alias
+142 ls -a
+143 echo "hello"
+144 echo "hello" &
+145 echo "hello" &
+146 echo "hello"
+147 echo "hello" &
+148 echo "hello" &
+149 echo "hello" &
+150 cd work/ &
+151 type cd
+152 type ls
+153 type ls -t

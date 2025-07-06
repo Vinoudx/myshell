@@ -1,49 +1,36 @@
 #include <alias.h>
 
-void alias_replace(char* buffer){
-    // FILE* fp = fopen("../configs/alias", "r");
+void alias_replace(char* buffer) {
     FILE* fp = fopen(ALIAS_PATH, "r");
     if (fp == NULL) {
-        perror("fopen");
         return;
     }
 
     char line[1024];
-    char tmpbuf[8192]; 
-    size_t bufsize = 1024;
     while (fgets(line, sizeof(line), fp) != NULL) {
+        // 去掉换行符
         line[strcspn(line, "\r\n")] = '\0';
-        char* equal_sign = strchr(line, '=');
-        if (!equal_sign) continue;
 
-        *equal_sign = '\0';
-        char* alias_name = line;
-        char* alias_value = equal_sign + 1;
+        char* p = strchr(line, '=');
+        if (!p) continue;
 
-        size_t name_len = strlen(alias_name);
-        size_t value_len = strlen(alias_value);
+        *p = '\0';  // 将 '=' 替换为 '\0'，分成两部分
+        const char* alias_name = line;
+        const char* alias_value = p + 1;
 
-        char* src = buffer;
-        char* dest = tmpbuf;
-        size_t remaining = bufsize - 1;
+        size_t alias_len = strlen(alias_name);
 
-        while (*src && remaining > 0) {
-            if (strncmp(src, alias_name, name_len) == 0) {
-                // 替换 alias_name 为 alias_value
-                if (value_len > remaining) break;
-                memcpy(dest, alias_value, value_len);
-                dest += value_len;
-                src += name_len;
-                remaining -= value_len;
-            } else {
-                *dest++ = *src++;
-                remaining--;
-            }
+        // 判断 buffer 是否以 alias_name 开头，且后面是空格或结尾
+        if (strncmp(buffer, alias_name, alias_len) == 0 &&
+            (buffer[alias_len] == ' ' || buffer[alias_len] == '\0')) {
+
+            // 构建新的 buffer： alias_value + 原 alias 后面的部分
+            char temp[1024];
+            snprintf(temp, sizeof(temp), "%s%s", alias_value, buffer + alias_len);
+            strncpy(buffer, temp, 1024);
+            buffer[1023] = '\0';
+            break;  // 只替换一次
         }
-        *dest = '\0';
-
-        strncpy(buffer, tmpbuf, bufsize);
-        buffer[bufsize - 1] = '\0';
     }
 
     fclose(fp);
@@ -51,7 +38,7 @@ void alias_replace(char* buffer){
 
 void alias_(char* pre_result, int* status, const char** args, size_t num_args){
     if(num_args == 0){
-        FILE* fp = fopen("ALIAS_PATH", "r");
+        FILE* fp = fopen(ALIAS_PATH, "r");
         if(fp == NULL){
             strcpy(pre_result, "\n");
             fclose(fp);
@@ -83,7 +70,7 @@ void alias_(char* pre_result, int* status, const char** args, size_t num_args){
             *status = 0;
             return;
         }
-        FILE* fp = fopen("ALIAS_PATH", "a+");
+        FILE* fp = fopen(ALIAS_PATH, "a+");
         char line[1024]; 
         while (fgets(line, sizeof(line), fp) != NULL) {
             if(strncmp(line, args[0], strlen(args[0])) == 0 && (line[strlen(args[0])] == '\n' || line[strlen(args[0])] == '\0')){
