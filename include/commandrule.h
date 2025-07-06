@@ -16,12 +16,13 @@ struct OptionRule{
     char option[4];     // 如 "-o", 主参数则为“main”
     int has_arg;            // 是否有参数
     enum ArgType arg_type;  // 参数类型
-    int required;           // 是否必须出现
+    int required;           // 参数最大数量
 };
 
 struct CommandRule{
     char command_name[16];
-    int num_main_params;
+    char type[16];
+    int num_main_params; // 至少有几个main参数
     int num_options;
     struct OptionRule options[4];
 };

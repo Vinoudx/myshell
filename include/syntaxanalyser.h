@@ -15,7 +15,7 @@
 #include <terminal_logger.h>
 
 #define MAX_WORD_LENGTH 128
-#define MAX_COMMAND_LENGTH 256
+#define MAX_COMMAND_LENGTH 16
 #define MAX_COMMAND_AMOUNT 10
 
 enum CommandType{
@@ -57,7 +57,8 @@ struct SyntaxAnalyseResult{
 
     enum CommandType type;
     size_t num_command;
-    char command_list[MAX_COMMAND_AMOUNT][MAX_COMMAND_LENGTH];
+    size_t command_length[MAX_COMMAND_LENGTH];
+    struct Token command_list[MAX_COMMAND_AMOUNT][MAX_COMMAND_LENGTH];
     size_t num_connect_char;    
     char connection_char[MAX_COMMAND_AMOUNT];
 
