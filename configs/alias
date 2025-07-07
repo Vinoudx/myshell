@@ -1,1 +1,2 @@
 ll=ls -a
+history=history 50

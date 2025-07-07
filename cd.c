@@ -13,6 +13,7 @@ void cd_(char* pre_result, int* status, const char** args, size_t num_args){
     }else{
         strcpy(pre_result, "cd: ");
         strcat(pre_result, strerror(errno));
+        strcat(pre_result, "\n");
         *status = 0;
     }
     INFO(pre_result);

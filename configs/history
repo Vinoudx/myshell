@@ -151,3 +151,22 @@
 151 type cd
 152 type ls
 153 type ls -t
+154 cd
+155 cd
+156 cd .
+157 alias
+158 alias
+159 alias "history=history 50"
+160 alias "history=history 50"
+161 alias "history=history 50"
+162 alias "history=history 50"
+163 alias "history=history 50"
+164 alias "history=history 50"
+165 history 50
+166 ls
+167 history 50
+168 ls -a
+169 echo "hello"
+170 cat a1
+171 cat < a1 a2 | grep "a"
+172 cat < a1 a2 | grep "a" &

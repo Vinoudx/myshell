@@ -124,6 +124,23 @@ void execute_task(char* buffer, char* working_path){
     char temp_result[2048] = {'\0'};
     struct Token tokens[MAX_COMMAND_LENGTH] = {{END, "end"}};
     size_t token_pos = 0;
+    
+    char final_command[MAX_INPUT_LENGTH] = {'\0'};
+    char current_command[MAX_INPUT_LENGTH] = {'\0'};
+    int current_pos = 0;
+    for(int i=0;i<strlen(buffer);i++){
+        if(buffer[i] == '|'){
+            current_pos = 0;
+            alias_replace(current_command);
+            strcat(final_command, current_command);
+        }else{
+            current_command[current_pos++] = buffer[i];
+        }
+    }
+
+
+    INFO(buffer);
+    token_pos = 0;
     tokenize_(buffer, tokens, &token_pos);
     struct SyntaxAnalyseResult res = syntax_analyser(tokens, token_pos);
     if(res.isValid == 0){
@@ -133,38 +150,7 @@ void execute_task(char* buffer, char* working_path){
         return;
     }
 
-
-    int current_connection_char = 0;
-    memset(buffer, '\0', MAX_INPUT_LENGTH);
-    for(int i=1;i<=res.num_command;i++){
-        char command[MAX_INPUT_LENGTH] = {'\0'};
-        for(int j=0;j<res.command_length[i]; j++){
-            strcat(command, res.command_list[i][j].content);
-            strcat(command, " ");
-        }
-        alias_replace(command);
-        strcat(buffer, command);
-        strcat(buffer, " ");
-        char ch[2] = {res.connection_char[current_connection_char++], '\0'};
-        strcat(buffer, ch);
-        strcat(buffer, " ");
-    }
-    if(res.isAsyn == 1){
-        strcat(buffer, "&");
-    }
-
-    INFO(buffer);
-    token_pos = 0;
-    tokenize_(buffer, tokens, &token_pos);
-    res = syntax_analyser(tokens, token_pos);
-    if(res.isValid == 0){
-        memset(buffer, '\0', MAX_INPUT_LENGTH);
-        strcpy(buffer, res.error_info);
-        strcat(buffer, "\n");
-        return;
-    }
-
-    for (int i=1;i<=res.num_command;i++){
+    for (int i=1;i<=res.num_command && res.isAsyn; i++){
         char* command_name = res.command_list[i][0].content;
         if(strcmp(command_name, "cd") == 0){
             strcpy(buffer, "cd: async not supported\n");

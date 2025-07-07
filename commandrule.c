@@ -1,6 +1,6 @@
 #include <commandrule.h>
 
-const struct CommandRule alias_command = {"alias", "shell build in", 1, 0, {{"main", 1, ARG_STRING, 0}}};
+const struct CommandRule alias_command = {"alias", "shell build in", 1, 1, {{"main", 1, ARG_STRING, 1}}};
 
 const struct CommandRule cat_command = {"cat", "cat", 1, 5, {
     {"main", 1, ARG_FILE, 1024},

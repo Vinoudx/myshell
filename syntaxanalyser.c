@@ -89,7 +89,7 @@ void tokenize_(const char* buffer, struct Token tokens[], size_t* token_pos){
         }else if(buffer[buffer_pos] == '\"'){
             // 捕获一个字符串
             buffer_pos++; //不要第一个引号
-            while (buffer[buffer_pos] != ' ' && buffer[buffer_pos] != '\0' && buffer[buffer_pos] != '\"') {
+            while (buffer[buffer_pos] != '\0' && buffer[buffer_pos] != '\"') {
                 word[word_pos++] = buffer[buffer_pos++];
             }
             buffer_pos++; // 不要第二个引号
