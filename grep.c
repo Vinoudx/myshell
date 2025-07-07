@@ -138,7 +138,7 @@ void grep_(char* pre_result, int* status, const char** args, size_t num_args){
             strcpy(in_file, args[i]);
         }else if(strcmp(args[i], ">") == 0){
             i++;
-            if(i >= num_args || pip){
+            if(i >= num_args){
                 strcpy(pre_result, "grep: invalid io_redirection\n");
                 *status = 0;
                 return;
@@ -155,6 +155,10 @@ void grep_(char* pre_result, int* status, const char** args, size_t num_args){
         *status = 0;
         return;
     }
+
+    INFO(pre_result);
+    INFO(out_file);
+
     char temp[1024] = {'\0'};
     if(pip == 1){
         grep_lines_in_string(patten, pre_result, temp, i_flag);

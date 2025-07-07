@@ -170,3 +170,59 @@
 170 cat a1
 171 cat < a1 a2 | grep "a"
 172 cat < a1 a2 | grep "a" &
+173 ls
+174 ls
+175 ls -a
+176 ls -l
+177 cd work/
+178 cd work/
+179 cd work/
+180 cd work/
+181 cd work/
+182 cd work/
+183 cd work/
+184 ls 
+185 ls -a
+186 ls -l
+187 ls
+188 cd work/
+189 cd ..
+190 cat a1 a2
+191 cat a1 a2
+192 cat < a1 a2
+193 cd work/
+194 ls
+195 ls
+196 cat < a1 > a2
+197 cat a2
+198 cat a3
+199 grep "a" < a3
+200 grep "ab" < a3
+201 echo "hello:
+202 echo "hello"
+203 echo $SHELL
+204 type ls cd cat
+205 type ls cd
+206 type ls cd -t
+207 type ls cd -a
+208 type ls cd -p
+209 alias "history=history 50"
+210 history 50
+211 ls
+212 cat a3
+213 cat < a3 | grep "ab" > a4
+214 cat < a3 | grep "ab" > a4
+215 cat a43
+216 cat < a3 | grep "ab" > a4
+217 cat < a3 | grep "ab" > a4
+218 cat a3
+219 cat < a3 | grep "ab"
+220 cat < a3 | grep "ab"
+221 cat < a3 | grep "ab"
+222 cat < a3 | grep "ab" > a4
+223 cd work/
+224 cat < a3 | grep "ab"
+225 cat < a3 | grep "ab" > a4
+226 cd work/
+227 cat < a3 | grep "ab" > a4
+228 cat a4

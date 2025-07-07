@@ -150,11 +150,29 @@ void execute_task(char* buffer, char* working_path){
         return;
     }
 
-    for (int i=1;i<=res.num_command && res.isAsyn; i++){
+
+    int s = 0;
+    for (int i=1;i<=res.num_command; i++){
         char* command_name = res.command_list[i][0].content;
-        if(strcmp(command_name, "cd") == 0){
+        if(strcmp(command_name, "cd") == 0 && res.isAsyn){
             strcpy(buffer, "cd: async not supported\n");
             return;
+        }else if(strcmp(command_name, "cd") == 0){
+            char* command_name = res.command_list[i][0].content;
+            char args[MAX_NUM_ARGS][MAX_ARG_LENGTH];
+            memset(args, '\0', sizeof(args));
+
+            for (int j=1;j<res.command_length[i];j++){
+                strcpy(args[j-1], res.command_list[i][j].content);
+            }
+            char* argv[MAX_NUM_ARGS];
+            memset(argv, '\0', sizeof(argv));
+            for (int k = 0; k < res.command_length[i] - 1; k++) {
+                argv[k] = args[k];
+            }
+            INFO("cd");
+            cd_(temp_result, &s, argv, res.command_length[i] - 1);
+            getcwd(working_path, 1024);
         }
     }
 
@@ -197,9 +215,10 @@ void execute_task(char* buffer, char* working_path){
                 ls_(temp_result, &status, argv, res.command_length[i] - 1);
 
             }else if(strcmp(command_name, "cd") == 0){
-                INFO("cd");
-                cd_(temp_result, &status, argv, res.command_length[i] - 1);
-                getcwd(working_path, 1024);
+                // INFO("cd");
+                // cd_(temp_result, &status, argv, res.command_length[i] - 1);
+                // getcwd(working_path, 1024);
+                // INFO(working_path);
 
             }else if(strcmp(command_name, "cat") == 0){
                 INFO("cat");
